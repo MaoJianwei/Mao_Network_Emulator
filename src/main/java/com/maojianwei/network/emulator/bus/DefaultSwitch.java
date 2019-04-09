@@ -1,6 +1,7 @@
 package com.maojianwei.network.emulator.bus;
 
 import com.maojianwei.network.emulator.bus.api.Switch;
+import com.maojianwei.network.emulator.bus.api.SwitchMonitor;
 import com.maojianwei.network.emulator.lib.Message;
 import com.maojianwei.network.emulator.node.api.Node;
 
@@ -14,9 +15,9 @@ import java.util.concurrent.TimeUnit;
 
 import static com.maojianwei.network.emulator.lib.MaoConst.BROADCAST_ADDR;
 
-public class DefaultSwitch implements Switch {
+public class DefaultSwitch implements Switch, SwitchMonitor {
 
-    private final String switchId;
+    private final String switchName;
 
     private Map<String, Node> nodes;
 
@@ -24,8 +25,8 @@ public class DefaultSwitch implements Switch {
     private BlockingQueue<Message> routerSendQueue;
 
 
-    public DefaultSwitch(String switchId) {
-        this.switchId = switchId;
+    public DefaultSwitch(String switchName) {
+        this.switchName = switchName;
         nodes = new HashMap<>();
         routerSendQueue = new LinkedBlockingQueue();
         recvThread = null;
@@ -55,6 +56,11 @@ public class DefaultSwitch implements Switch {
     }
 
     @Override
+    public String getName() {
+        return switchName;
+    }
+
+    @Override
     public void plugInNode(Node node) {
         nodes.put(node.getPortIp(this), node);
     }
@@ -75,6 +81,38 @@ public class DefaultSwitch implements Switch {
         return false;
     }
 
+
+    // ====== DefaultSwitch specific function ======
+    // now, not need
+
+
+    // ====== DefaultSwitch monitor function ======
+    @Override
+    public String summary() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("switchName=%s\n", switchName));
+        sb.append("nodes=\n");
+        sb.append(nodes.toString());
+        sb.append(String.format("\nrouterSendQueue.length=%d\n", routerSendQueue.size()));
+        sb.append("routerSendQueue=\n");
+        sb.append(routerSendQueue.toString());
+        return sb.toString();
+    }
+
+    public String getPortStatus() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("nodes=\n");
+        sb.append(nodes.toString());
+        return sb.toString();
+    }
+
+    @Override
+    public String toString() {
+        return getName();
+    }
+
+
+
     private class SwitchRecvTask implements Runnable {
 
         @Override
@@ -83,7 +121,7 @@ public class DefaultSwitch implements Switch {
                 while(true) {
                     Message msg = routerSendQueue.poll(1, TimeUnit.MILLISECONDS);
                     if (msg != null) {
-                        System.out.println(String.format("============= Switch %s get msg =============\n", switchId) + msg.toString()); //FIXME - debug now
+                        System.out.println(String.format("============= Switch %s get msg =============\n", switchName) + msg.toString()); //FIXME - debug now
 
                         if (msg.getDstIp().equals(BROADCAST_ADDR)) {
                             nodes.values().forEach(node -> node.recvMessage(msg));

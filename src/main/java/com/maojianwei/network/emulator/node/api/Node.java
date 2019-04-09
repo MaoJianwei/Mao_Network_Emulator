@@ -8,6 +8,7 @@ public interface Node {
     boolean start();
     void stop();
 
+    String getName();
     String getPortIp(Switch attachedSwitch);
 
     boolean recvMessage(Message msg);

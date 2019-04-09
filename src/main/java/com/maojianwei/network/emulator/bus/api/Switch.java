@@ -12,6 +12,12 @@ import com.maojianwei.network.emulator.node.api.Node;
 public interface Switch {
 
     /**
+     * Switch name for experiment convenience.
+     * @return
+     */
+    String getName();
+
+    /**
      * Reentry is not supported.
      *
      * @return true if switch stopped before. false otherwise.

@@ -1,9 +1,9 @@
 package com.maojianwei.network.emulator.node;
 
-import com.maojianwei.network.emulator.bus.DefaultSwitch;
 import com.maojianwei.network.emulator.bus.api.Switch;
 import com.maojianwei.network.emulator.lib.Message;
 import com.maojianwei.network.emulator.node.api.Node;
+import com.maojianwei.network.emulator.node.api.NodeMonitor;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,9 +13,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-import static com.maojianwei.network.emulator.lib.MaoConst.BROADCAST_ADDR;
+public class Router implements Node, NodeMonitor {
 
-public class Router implements Node {
+    private String routerName;
 
     private String routerId;
     private String loopbackIp;
@@ -26,11 +26,17 @@ public class Router implements Node {
     private ExecutorService recvThread;
     private BlockingQueue<Message> routerRecvQueue;
 
+
+    public Router(String routerName) {
+        this(routerName, null);
+    }
+
     /**
      *
      * @param loopbackIp can be null
      */
-    public Router(String loopbackIp) {
+    public Router(String routerName, String loopbackIp) {
+        this.routerName = routerName;
         this.loopbackIp = loopbackIp;
 
         ipToSwitch = new HashMap<>();
@@ -61,6 +67,11 @@ public class Router implements Node {
             recvThread = null;
             routerRecvQueue.clear();
         }
+    }
+
+    @Override
+    public String getName() {
+        return routerName;
     }
 
     @Override
@@ -126,6 +137,39 @@ public class Router implements Node {
         } else {
             routerId = loopbackIp;
         }
+    }
+
+
+
+
+    // ====== Router monitor functions ======
+
+    @Override
+    public String summary() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("routerName=%s\n", routerName));
+        sb.append(String.format("routerId=%s\n", routerId));
+        sb.append(String.format("loopbackIp=%s\n", loopbackIp));
+        sb.append("ipToSwitch=\n");
+        sb.append(ipToSwitch.toString());
+        sb.append("\nswitchToIp=\n");
+        sb.append(switchToIp.toString());
+        sb.append(String.format("\nrouterRecvQueue.length=%d\n", routerRecvQueue.size()));
+        sb.append("routerRecvQueue=\n");
+        sb.append(routerRecvQueue.toString());
+        return sb.toString();
+    }
+
+    public String getPortStatus() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("ipToSwitch=\n");
+        sb.append(ipToSwitch.toString());
+        return sb.toString();
+    }
+
+    @Override
+    public String toString() {
+        return getName();
     }
 
 
