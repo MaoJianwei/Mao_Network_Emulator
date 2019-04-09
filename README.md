@@ -1,6 +1,12 @@
-# Network_Emulator
+# Mao Network Emulator
 
-Network emulator mainly for routing protocol, by [Jianwei Mao @ BUPT FNLab](http://www.maojianwei.com/)
+Simple and efficient network emulator, mainly for routing protocol, by [Jianwei Mao @ BUPT FNLab](http://www.maojianwei.com/)
+
+.
+
+## Update Note
+
+2019.04.09 Release **v0.1** , running architecture ready, monitor architecture ready, without any service logic.
 
 .
 
