@@ -6,7 +6,7 @@ Simple and efficient network emulator, mainly for routing protocol, by [Jianwei 
 
 ## Update Note
 
-2019.04.09 Release **v0.1** , running architecture ready, monitor architecture ready, without any service logic.
+2019.04.09 [Release **v0.1**](https://github.com/MaoJianwei/Mao_Network_Emulator/releases/tag/0.1) , running architecture ready, monitor architecture ready, without any service logic.
 
 .
 
